@@ -1,0 +1,73 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# playwright
+/packages/e2e/playwright-report/
+/packages/e2e/test-results/
+/packages/e2e/blob-report/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# nitro
+.nitro/
+.output/
+
+# production
+build
+
+# misc
+.DS_Store
+*.pem
+*.key
+!deploy/tls/tls.key
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env
+.env*.local
+
+
+# vercel
+.vercel
+
+# typescript
+dist/
+.cache
+
+# turbo
+.turbo
+
+# docker
+docker-compose.override.yml
+
+# runtime env
+__ENV.js
+i18n.cache
+
+# pgdata
+/apps/web/pgdata
+/data/
+/backups/
+/imports/
+
+# local scripts
+scripts/
+!packages/db/scripts/
+!packages/db/scripts/*.mjs
+
+.claude

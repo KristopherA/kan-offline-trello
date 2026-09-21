@@ -1,0 +1,68 @@
+{
+  "name": "@kan/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./client": {
+      "types": "./src/client.ts",
+      "default": "./src/client.ts"
+    },
+    "./schema": {
+      "types": "./src/schema/index.ts",
+      "default": "./src/schema/index.ts"
+    },
+    "./types/*": {
+      "types": "./src/types/*",
+      "default": "./src/types/*"
+    },
+    "./repository/*": {
+      "types": "./src/repository/*.ts",
+      "default": "./src/repository/*.ts"
+    },
+    "./redis": {
+      "types": "./src/redis.ts",
+      "default": "./src/redis.ts"
+    }
+  },
+  "license": "GPL-3.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "migrate": "pnpm with-env drizzle-kit migrate",
+    "push": "pnpm with-env drizzle-kit push",
+    "studio": "pnpm with-env drizzle-kit studio",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.7",
+    "@kan/logger": "workspace:^",
+    "@kan/shared": "workspace:^",
+    "drizzle-orm": "^0.42.0",
+    "drizzle-zod": "^0.5.1",
+    "ioredis": "^5.9.2",
+    "pg": "^8.11.3",
+    "uuid": "^11.1.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kan/eslint-config": "workspace:*",
+    "@kan/prettier-config": "workspace:*",
+    "@kan/tsconfig": "workspace:*",
+    "@types/pg": "^8.10.9",
+    "dotenv-cli": "^7.4.4",
+    "drizzle-kit": "^0.28.1",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@kan/prettier-config"
+}

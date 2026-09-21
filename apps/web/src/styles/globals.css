@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-size: 14px;
+}
+
+[contenteditable="true"]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color: #707070;
+  font-size: 0.8rem;
+}
+
+.gradient-border::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 45deg,
+    rgba(244, 114, 182, 0.4) 85deg,
+    rgba(192, 132, 252, 0.4) 95deg,
+    transparent 110deg,
+    transparent 360deg
+  );
+  content: "";
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+}
+
+@layer utilities {
+  @supports not (overflow-wrap: anywhere) {
+    .break-anywhere {
+      word-break: break-word;
+    }
+  }
+
+  @supports (overflow-wrap: anywhere) {
+    .break-anywhere {
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+/* Tippy.js tooltip theme */
+.tippy-box[data-theme~="tooltip"] {
+  @apply rounded-md border border-light-600 bg-white px-2 py-1 text-sm text-neutral-900 shadow-lg dark:border-dark-600 dark:bg-dark-100 dark:text-dark-1000;
+}
+
+.tippy-box[data-theme~="tooltip"] > .tippy-arrow::before {
+  @apply border-t-light-600 dark:border-t-dark-600;
+}
+
+.tippy-box[data-theme~="tooltip"][data-placement^="bottom"]
+  > .tippy-arrow::before {
+  @apply border-b-light-600 dark:border-b-dark-600;
+}

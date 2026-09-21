@@ -1,0 +1,94 @@
+{
+  "name": "@kan/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./root": {
+      "types": "./src/root.ts",
+      "default": "./src/root.ts"
+    },
+    "./trpc": {
+      "types": "./src/trpc.ts",
+      "default": "./src/trpc.ts"
+    },
+    "./trpc-context": {
+      "types": "./src/trpc-context.ts",
+      "default": "./src/trpc-context.ts"
+    },
+    "./types": {
+      "types": "./src/types/router.types.ts",
+      "default": "./src/types/router.types.ts"
+    },
+    "./openapi": {
+      "types": "./src/openapi.ts",
+      "default": "./src/openapi.ts"
+    },
+    "./utils/rateLimit": {
+      "types": "./src/utils/rateLimit.ts",
+      "default": "./src/utils/rateLimit.ts"
+    },
+    "./utils/apiLogging": {
+      "types": "./src/utils/apiLogging.ts",
+      "default": "./src/utils/apiLogging.ts"
+    },
+    "./utils/permissions": {
+      "types": "./src/utils/permissions.ts",
+      "default": "./src/utils/permissions.ts"
+    },
+    "./utils/trello-token": {
+      "types": "./src/utils/trello-token.ts",
+      "default": "./src/utils/trello-token.ts"
+    },
+    "./utils/workspace": {
+      "types": "./src/utils/workspace.ts",
+      "default": "./src/utils/workspace.ts"
+    },
+    "./utils/apiToken": {
+      "types": "./src/utils/apiToken.ts",
+      "default": "./src/utils/apiToken.ts"
+    },
+    "./utils/paidWorkspaceCache": {
+      "types": "./src/utils/paidWorkspaceCache.ts",
+      "default": "./src/utils/paidWorkspaceCache.ts"
+    }
+  },
+  "license": "GPL-3.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@kan/auth": "workspace:*",
+    "@kan/db": "workspace:*",
+    "@kan/email": "workspace:^",
+    "@kan/logger": "workspace:^",
+    "@kan/shared": "workspace:^",
+    "@kan/stripe": "workspace:^",
+    "@trpc/server": "catalog:",
+    "rate-limiter-flexible": "^9.0.1",
+    "superjson": "2.2.1",
+    "trpc-to-openapi": "^2.3.2",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kan/eslint-config": "workspace:*",
+    "@kan/prettier-config": "workspace:*",
+    "@kan/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "^3.0.0"
+  },
+  "prettier": "@kan/prettier-config"
+}

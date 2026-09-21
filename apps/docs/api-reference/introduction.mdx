@@ -1,0 +1,33 @@
+---
+title: "Introduction"
+description: "Learn how to integrate with Kan's REST API."
+---
+
+## Base URL
+
+```
+https://kan.bn/api/v1
+```
+
+## Authentication
+
+Most endpoints require authentication using your API key. You can create one in the [settings page](https://kan.bn/settings) of your account. Include this key as a Bearer token in the `Authorization` header of each request.
+
+```
+'Authorization': 'Bearer kan_123456789'
+```
+
+## Response codes
+
+Kan uses standard HTTP codes to indicate the success or failure of your requests.
+
+In general, `2xx` HTTP codes correspond to success, `4xx` codes are for user-related failures, and `5xx` codes are for infrastructure issues.
+
+| Status | Description                     |
+| ------ | ------------------------------- |
+| `200`  | Success                         |
+| `400`  | Invalid parameters              |
+| `401`  | Missing token                   |
+| `403`  | Invalid token                   |
+| `404`  | Resource not found              |
+| `500`  | Error with Kan's infrastructure |

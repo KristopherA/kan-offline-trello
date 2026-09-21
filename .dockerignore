@@ -1,0 +1,68 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose*.yml
+.dockerignore
+
+# Dependencies (rebuilt in Docker)
+node_modules
+**/node_modules
+
+# Build outputs (rebuilt in Docker)
+**/.next
+**/dist
+**/out
+**/.turbo
+**/.cache
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github
+.husky
+.changeset
+
+# Documentation (not needed in build)
+*.md
+!packages/db/migrations/**
+LICENSE
+CONTRIBUTING.md
+AGENTS.md
+CHANGELOG.md
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/__tests__
+**/coverage
+
+# Logs
+pnpm-debug.log
+**/pnpm-debug.log
+
+# Cloud compose (separate deployment)
+cloud/
+
+# Deployment-only files and secrets (never send these into an image build)
+deploy/
+data/
+backups/
+imports/

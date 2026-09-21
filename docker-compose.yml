@@ -1,0 +1,129 @@
+name: ${COMPOSE_PROJECT_NAME:-kan-offline-trello}
+
+x-logging: &default-logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kan_db
+      POSTGRES_USER: kan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - ${DATA_ROOT:-./data}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kan -d kan_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - backend
+    logging: *default-logging
+
+  migrate:
+    image: ${COMPOSE_PROJECT_NAME:-kan-offline-trello}-migrate:local
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      target: migrate
+    environment:
+      POSTGRES_URL: postgresql://kan:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/kan_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - backend
+    logging: *default-logging
+
+  trello-import:
+    profiles: ["tools"]
+    image: ${COMPOSE_PROJECT_NAME:-kan-offline-trello}-importer:local
+    build:
+      context: .
+      dockerfile_inline: |
+        # syntax=docker/dockerfile:1.7
+        ARG NODE_VERSION=20
+        FROM node:$${NODE_VERSION}-alpine
+        WORKDIR /importer
+        RUN --mount=type=cache,id=trello-importer-npm-cache,target=/root/.npm,sharing=locked \
+            npm init -y && \
+            npm install pg@8.16.3 --save-exact && \
+            rm -rf /tmp/*
+        COPY packages/db/scripts/import-trello-export.mjs ./import-trello-export.mjs
+        USER node
+        ENTRYPOINT ["node", "/importer/import-trello-export.mjs"]
+        CMD ["--help"]
+    environment:
+      POSTGRES_URL: postgresql://kan:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/kan_db
+    volumes:
+      - ${TRELLO_EXPORT_DIR:-./imports/trello-export}:/trello-export:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+
+  web:
+    image: ${COMPOSE_PROJECT_NAME:-kan-offline-trello}-web:local
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      target: web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NEXT_PUBLIC_BASE_URL: https://${KAN_HOSTNAME:?Set KAN_HOSTNAME in .env}
+      BETTER_AUTH_TRUSTED_ORIGINS: https://${KAN_HOSTNAME:?Set KAN_HOSTNAME in .env}
+      POSTGRES_URL: postgresql://kan:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/kan_db
+      NEXT_PUBLIC_ALLOW_CREDENTIALS: "true"
+      NEXT_PUBLIC_DISABLE_EMAIL: ${NEXT_PUBLIC_DISABLE_EMAIL:-true}
+      NEXT_API_BODY_SIZE_LIMIT: 50mb
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    expose:
+      - "3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - frontend
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+
+  proxy:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    environment:
+      KAN_HOSTNAME: ${KAN_HOSTNAME:?Set KAN_HOSTNAME in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./deploy/tls/tls.crt:/etc/nginx/tls/tls.crt:ro
+      - ./deploy/tls/tls.key:/etc/nginx/tls/tls.key:ro
+    depends_on:
+      - web
+    networks:
+      - frontend
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+
+networks:
+  frontend:
+  backend:
+    internal: true
